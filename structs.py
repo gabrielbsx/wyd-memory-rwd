@@ -346,4 +346,3 @@ class CUser(Structure):
         ("LastSkillTick", c_int * 248),
         ("UnknowByte_4036", c_int),
     ]
-
