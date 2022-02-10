@@ -26,7 +26,47 @@ def loadBuffers() -> None:
     io.BytesIO(cUserBuffer).readinto(cUser)
     io.BytesIO(cMobBuffer).readinto(cMob)
 
-class Application():
+class PacketHandle():
+    def __init__(self) -> None:
+        self.packetIds = [0x333, 0x334,]
+
+    def validateBuffer(self, buffer: bytes) -> bool:
+        if buffer[IP].src != SERVER_IP:
+            return False
+
+        if buffer[TCP].dport != 8281:
+            return False
+
+        if not buffer.haslayer(Raw):
+            return False
+
+        return True
+
+    def validatePacket(self, payload: bytes) -> bool | PacketHeader:
+        header = PacketHeader.from_buffer_copy(payload)
+
+        if not header.PacketId in self.packetIds:
+            return False
+
+        return True
+
+
+    def handle(self, buffer: bytes) -> None:
+        if not self.validateBuffer(buffer):
+            return
+
+        payload = decrypt(bytes(buffer[Raw].load))
+
+        header = self.validatePacket(payload)
+
+        if not header:
+            return
+
+        if header.PacketId == 0x333:
+            io.BytesIO(payload).readinto(P334)
+
+
+class Application(PacketHandle):
     def __init__(self) -> None:
         self.table = []
 
@@ -41,37 +81,9 @@ class Application():
     def dumpTable(self) -> None:
         print(tabulate(self.table, ['ID', 'CONTA', 'PERSONAGEM', 'LEVEL', 'KINGDOM', 'CLASS', 'GUILD']))
 
-    def packet_handle(self, packet: bytes) -> None:
-        if packet[IP].src != self.server_ip:
-            return
-
-        if not packet.haslayer(Raw):
-            return
-
-        payload = bytes(packet.getlayer(Raw).load)
-        decrypted = decrypt(payload)
-
-        header = PacketHeader()
-        io.BytesIO(decrypted).readinto(header)
-
-        if header.PacketId == None:
-            return
-
-        loadBuffers()
-
-        if header.PacketId == 0x334:
-            stPacket = P334()
-            io.BytesIO(decrypted).readinto(stPacket)
-
-            message = stPacket.Arg.decode('latin')
-            if message[0] == '@':
-                print(message)
-
-        return
-
     def initialize(self) -> None:
         global IFACE, FILTER, SERVER_IP
-        sniff(iface=IFACE, filter=FILTER, store=0, prn=self.packet_handle)
+        sniff(iface=IFACE, filter=FILTER, store=0, prn=self.handle)
 
 if __name__ == '__main__':
     app = Application()
