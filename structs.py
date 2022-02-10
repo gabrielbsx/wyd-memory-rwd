@@ -346,3 +346,35 @@ class CUser(Structure):
         ("LastSkillTick", c_int * 248),
         ("UnknowByte_4036", c_int),
     ]
+
+class PacketHeader(Structure):
+    _fields_ = [
+        ('Size', c_ushort),
+        ('Seq', c_ushort),
+        ('PacketId', c_ushort),
+        ('ClientId', c_ushort),
+        ('Tick', c_uint),
+    ]
+
+class P334(Structure):
+    _fields_ = [
+        ('Header', PacketHeader),
+        ('Cmd', c_char * 16),
+        ('Arg', c_char * 128),
+        ('Color', c_int),
+    ]
+
+class P333(Structure):
+    _fields_ = [
+        ('Header', PacketHeader),
+        ('String', c_char * 128),
+    ]
+
+class P338(Structure):
+    _fields_ = [
+        ('Header', PacketHeader),
+        ('Hold', c_int),
+        ('KilledMob', c_ushort),
+        ('Killer', c_ushort),
+        ('Exp', c_longlong),
+    ]
