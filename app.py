@@ -1,20 +1,27 @@
-import ctypes
+from ctypes import sizeof
 import psutil
+import pymem
+import io
+from structs import CUser
 
 if __name__ == '__main__':
-    process_name = 'TMSrv.exe'
-    pid = 0x0
+    CUSER_ADDRESS = 0x061AAAB8
+    CMOB_ADDRESS = 0x7D84AC0
+    PROCESS_NAME = 'TMSRVIN.exe'
 
-    for proc in psutil.process_iter():
-        try:
-            if process_name in proc.name():
-                pid = proc.pid
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            exit()
+    print(sizeof(CUser))
+    
+    pm = pymem.Pymem("TMSRVIN.exe")
 
-    CUser_Addr = 0x61AAAB8
-    CMob_Addr = 0x7D84AC0
+    base_address = pm.base_address
+    process_handle = pm.process_handle
 
-    print(pid, CUser_Addr, CMob_Addr)
+    cUser = (CUser * 1000)()
 
-    pass
+    buffer = pm.read_bytes(base_address + CUSER_ADDRESS, sizeof(cUser))
+
+    io.BytesIO(buffer).readinto(cUser)
+
+    for user in cUser:
+        if user.AccoutName != b'':
+            print(user.AccountName)

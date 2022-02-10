@@ -108,13 +108,13 @@ class STRUCT_SELCHAR(Structure):
 
 class MSG_Trade(Structure):
     _fields_ = [
-        ("Size", c_ushort),
-        ("KeyWord", c_ubyte),
-        ("CheckSum", c_ubyte),
-        ("Type", c_ushort),
-        ("ID", c_ushort),
+        ("Size", c_uint16),
+        ("KeyWord", c_uint8),
+        ("CheckSum", c_uint8),
+        ("Type", c_uint16),
+        ("ID", c_uint16),
         ("Tick", c_uint),
-        ("Item", c_uint * 15),
+        ("Item", STRUCT_ITEM * 15),
         ("CarryPos", c_char * 15),
         ("TradeMoney", c_int),
         ("MyCheck", c_ubyte),
@@ -123,11 +123,11 @@ class MSG_Trade(Structure):
 
 class MSG_AutoTrade(Structure):
     _fields_ = [
-        ("Size", c_ushort),
-        ("KeyWord", c_ubyte),
-        ("CheckSum", c_ubyte),
-        ("Type", c_ushort),
-        ("ID", c_ushort),
+        ("Size", c_uint16),
+        ("KeyWord", c_uint8),
+        ("CheckSum", c_uint8),
+        ("Type", c_uint16),
+        ("ID", c_uint16),
         ("Tick", c_uint),
         ("Desc", c_char * 24),
         ("Item", STRUCT_ITEM * 12),
@@ -261,7 +261,7 @@ class CUser(Structure):
         ("Mode", c_int),
         ("TradeMode", c_int),
         ("cSock", CPSock),
-        ("Cargo", c_int * 128),
+        ("Cargo", STRUCT_ITEM * 128),
         ("Coin", c_int),
         ("cProgress", c_ushort),
         ("UnknowByte_1138", c_short),
@@ -346,3 +346,4 @@ class CUser(Structure):
         ("LastSkillTick", c_int * 248),
         ("UnknowByte_4036", c_int),
     ]
+
