@@ -4,7 +4,7 @@ import io
 from structs import P334, CUser, CMob, PacketHeader
 from tabulate import tabulate
 from base import decrypt
-from scapy import sniff
+from scapy.all import *
 
 BASE_ADDRESS = 0x00401000
 CUSER_ADDRESS = 0x061AAAB8
@@ -69,11 +69,9 @@ class Application():
 
         return
 
-
     def initialize(self) -> None:
         global IFACE, FILTER, SERVER_IP
         sniff(iface=IFACE, filter=FILTER, store=0, prn=self.packet_handle)
-
 
 if __name__ == '__main__':
     app = Application()
