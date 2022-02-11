@@ -1,6 +1,7 @@
-from ctypes import sizeof
 import pymem
 import io
+import requests
+from ctypes import sizeof
 from structs import P334, CUser, CMob, PacketHeader
 from tabulate import tabulate
 from base import decrypt
@@ -31,10 +32,7 @@ class PacketHandle():
         self.packetIds = [0x333, 0x334,]
 
     def validateBuffer(self, buffer: bytes) -> bool:
-        if buffer[IP].src != SERVER_IP:
-            return False
-
-        if buffer[TCP].dport != 8281:
+        if buffer[IP].src == SERVER_IP:
             return False
 
         if not buffer.haslayer(Raw):
@@ -43,12 +41,14 @@ class PacketHandle():
         return True
 
     def validatePacket(self, payload: bytes) -> bool | PacketHeader:
-        header = PacketHeader.from_buffer_copy(payload)
+        header = PacketHeader()
+
+        io.BytesIO(payload).readinto(header)
 
         if not header.PacketId in self.packetIds:
             return False
 
-        return True
+        return header
 
 
     def handle(self, buffer: bytes) -> None:
@@ -62,13 +62,23 @@ class PacketHandle():
         if not header:
             return
 
-        if header.PacketId == 0x333:
-            io.BytesIO(payload).readinto(P334)
+        if header.PacketId == 0x334:
+            loadBuffers()
+            p334 = P334()
+            io.BytesIO(payload).readinto(p334)
+            message = p334.Arg.decode('latin')
+
+            if message[0] == '@':
+                index = p334.Header.ClientId
+                mobname = cMob[index].Mob.Name.decode('latin1')
+
+                requests.post('http://c06f-2804-7f0-b180-9394-6c01-9c64-d930-6ef5.ngrok.io/api/v1/chat-messages', data={'message': message, 'nick': mobname})
 
 
 class Application(PacketHandle):
     def __init__(self) -> None:
         self.table = []
+        PacketHandle.__init__(self)
 
     def loadTable(self) -> None:
         global cUser, cMob
