@@ -19,32 +19,6 @@ IFACE = 'Intel(R) PRO/1000 MT Network Connection'
 FILTER = 'tcp and port 8281 and host 135.148.49.138'
 SERVER_IP = '135.148.49.138'
 
-def decrypt(data: bytes) -> bytes:
-    data = bytearray(data)
-    
-    packet_size = len(data)
-    packet_key = data[2]
-
-    keyword = Keys[0:][2 * (packet_key & 0xFF)]
-    sum1, sum2 = (0, 0)
-    
-    for i in range(4, packet_size):
-        sum1 += data[i]
-        key_byte = Keys[1:][2 * (keyword & 0xFF)]
-        
-        if (i & 0x03) == 0:
-            data[i] = (data[i] - (key_byte << 0x01)) & 0xFF
-        elif (i & 0x03) == 1:
-            data[i] = (data[i] + (key_byte >> 0x03)) & 0xFF
-        elif (i & 0x03) == 2:
-            data[i] = (data[i] - (key_byte << 0x02)) & 0xFF
-        elif (i & 0x03) == 3:
-            data[i] = (data[i] + (key_byte >> 0x05)) & 0xFF
-        sum2 += data[i]
-
-        keyword += 1
-    return bytes(data) if data[3] == (sum1 - sum2) & 0xFF else None
-
 def loadBuffers() -> None:
     global cUser, cMob, pm, CUSER_ADDRESS, CMOB_ADDRESS
 
