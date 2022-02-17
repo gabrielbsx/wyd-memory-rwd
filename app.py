@@ -33,6 +33,7 @@ class PacketManager(object):
         self.buffers: List[bytes] = []
         self.buffer: bytes = data
         self.splitBuffer()
+        self.bufferIterator()
 
     def decrypt(self, data: bytes) -> bytes:
         data = bytearray(data)
@@ -76,15 +77,20 @@ class PacketManager(object):
             keyword += 1
         return bytes(data) if data[3] == (sum1 - sum2) & 0xFF else None
 
-    async def splitBuffer(self) -> Future[None]:
-        packet_id = 0
+    def splitBuffer(self) -> None:
         packet_size = c_short()
         packet_size.value = 0
+        initial_bytes = 0
 
-        while packet_id * packet_size < len(self.buffer):
-            io.BytesIO(self.buffer[packet_id * packet_size:packet_id * packet_size + 2]).readinto(packet_size)
-            self.buffers.append(self.buffer[packet_id * packet_size:packet_id * packet_size + packet_size.value + 2])
-            packet_id += 1
+        while initial_bytes < len(self.buffer):
+            io.BytesIO(self.buffer[initial_bytes:]).readinto(packet_size)
+            n_buffer = self.buffer[initial_bytes:packet_size.value + initial_bytes]
+            self.buffers.append(n_buffer)
+            initial_bytes = initial_bytes + packet_size.value
+
+    def bufferIterator(self) -> None:
+        for packet in self.buffers:
+            payload = self.decrypt(packet)
 
 
 class PacketHandle(PacketManager):
@@ -101,23 +107,7 @@ class PacketHandle(PacketManager):
     def handle(self, buffer: bytes) -> None:
         if not self.validateBuffer(buffer):
             return
-            
         self.packetManager(buffer)
-
-        return
-            
-        '''if header.PacketId == 0x334:
-            loadBuffers()
-            p334 = P334()
-            io.BytesIO(payload).readinto(p334)
-            message = p334.Arg.decode('latin')
-
-            if message[0] == '@':
-                index = p334.Header.ClientId
-                mobname = cMob[index].Mob.Name.decode('latin1')
-
-                requests.post('http://c06f-2804-7f0-b180-9394-6c01-9c64-d930-6ef5.ngrok.io/api/v1/chat-messages', data={'message': message, 'nick': mobname})
-        '''
 
 class Application(PacketHandle):
     def __init__(self) -> None:
