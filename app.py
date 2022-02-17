@@ -168,7 +168,7 @@ class PacketManager(object): #PACKET MANAGER
         return bytes(data) if data[3] == (sum1 - sum2) & 0xFF else None
 
     def splitBuffer(self) -> None:
-        packet_size = c_short()
+        packet_size = c_short() 
         packet_size.value = 0
         initial_bytes = 0
         while initial_bytes < len(self.buffer):
