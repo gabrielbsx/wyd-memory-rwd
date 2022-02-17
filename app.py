@@ -1,13 +1,11 @@
 import pymem
 import requests
-from asyncio import Future
 from io import BytesIO
 from ctypes import c_short, sizeof
 from structs import P333, P334, P338, P364, P366, P666, CUser, CMob, PacketHeader
 from tabulate import tabulate
 from base import Keys
 from scapy.all import *
-from scapy.layers.inet import IP
 
 BASE_ADDRESS = 0x00401000
 CUSER_ADDRESS = 0x061AAAB8
@@ -28,7 +26,7 @@ def loadBuffers() -> None:
     io.BytesIO(cUserBuffer).readinto(cUser)
     io.BytesIO(cMobBuffer).readinto(cMob)
 
-class Packet_666():
+class Packet_666(): #PACKET KILL
     def __init__(self, buffer: bytes):
         self.packet = P666()
         BytesIO(buffer).readinto(self.packet)
@@ -112,8 +110,8 @@ class Packet_334(): #GLOBAL CHAT MESSAGE OR MESSAGE WITH COMMAND
 
 class PacketManager(object): #PACKET MANAGER
     def __init__(self, data: bytes) -> None:
-        self.buffers: List[bytes] = []
-        self.buffer: bytes = data
+        self.buffers = []
+        self.buffer = data
         self.splitBuffer()
         self.bufferIterator()
         self.instancePacket = {
@@ -172,7 +170,7 @@ class PacketManager(object): #PACKET MANAGER
         packet_size.value = 0
         initial_bytes = 0
         while initial_bytes < len(self.buffer):
-            io.BytesIO(self.buffer[initial_bytes:]).readinto(packet_size)
+            io.BytesIO(self.buffer[initial_bytes:initial_bytes + 2]).readinto(packet_size)
             n_buffer = self.buffer[initial_bytes:packet_size.value + initial_bytes]
             self.buffers.append(n_buffer)
             initial_bytes = initial_bytes + packet_size.value
@@ -203,7 +201,7 @@ class PacketHandle(PacketManager):
         if not self.validateBuffer(buffer):
             return
 
-        self.packetManager(buffer)
+        self.packetManager(buffer[Raw].load)
 
 class Application(PacketHandle): #APPLICATION SNIFFER
     def __init__(self) -> None:
