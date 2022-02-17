@@ -413,3 +413,11 @@ class P366(Structure):
         ('Rsv', c_ushort),
         ('LearnedSkill', c_char),
     ]
+
+class P666(Structure):
+    _fields_ = [
+        ('Header', PacketHeader),
+        ('KilledID', c_short),
+        ('KillerID', c_short),
+        ('Pos', STRUCT_POSITION),
+    ]
