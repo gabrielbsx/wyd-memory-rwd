@@ -333,13 +333,13 @@ class CUser(Structure):
         ("UnknowByte_2852", c_int),
         ("UnknowByte_2856", c_int),
         ("UnknowByte_2860", c_int),
-        ("UnknowByte_2864", c_int),
+        ("InternalCounter", c_int),
         ("UnknowByte_2868", c_int),
-        ("UnknowByte_2872", c_int),
+        ("CounterAttack", c_int),
         ("UnknowByte_2876", c_int),
         ("UnknowByte_2880", c_int),
         ("UnknowByte_2884", c_int),
-        ("UnknowByte_2888", c_int * 36),
+        ("UnknowByte_2888", c_int * 32),
         ("UnknowByte_3032", c_int),
         ("UnknowByte_3036", c_int),
         ("UnknowByte_3040", c_int),
@@ -377,4 +377,39 @@ class P338(Structure):
         ('KilledMob', c_ushort),
         ('Killer', c_ushort),
         ('Exp', c_longlong),
+    ]
+
+class P364(Structure):
+    _fields_ = [
+        ('Header', PacketHeader),
+        ('PosX', c_short),
+        ('PosY', c_short),
+        ('MobID', c_ushort),
+        ('MobName', c_char * 16),
+        ('Equip', c_ushort * 16),
+        ('Affect', c_ushort * 32),
+        ('Guild', c_ushort),
+        ('GuildLevel', c_char),
+        ('Score', STRUCT_SCORE),
+        ('CreateType', c_ushort),
+        ('Equip2', c_ushort * 16),
+        ('Nick', c_char * 26),
+        ('Server', c_char),
+    ]
+
+class P366(Structure):
+    _fields_ = [
+        ('Header', PacketHeader),
+        ('Score', STRUCT_SCORE),
+        ('Critical', c_char),
+        ('SaveMana', c_char),
+        ('Affect', c_ushort * 32),
+        ('Guild', c_ushort),
+        ('GuildLevel', c_char),
+        ('Resist', c_short * 4),
+        ('ReqHp', c_int),
+        ('ReqMp', c_int),
+        ('Magic', c_ushort),
+        ('Rsv', c_ushort),
+        ('LearnedSkill', c_char),
     ]
