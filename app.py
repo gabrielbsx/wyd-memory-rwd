@@ -179,8 +179,8 @@ class PacketManager(object): #PACKET MANAGER
         for buffer in self.buffers:
             packet_header = PacketHeader()
             io.BytesIO(buffer).readinto(packet_header)
-            packet_id = packet_header.Header.PacketID
-            client_id = packet_header.Header.ClientId
+            packet_id = packet_header.PacketID
+            client_id = packet_header.ClientId
             if client_id not in range(0, 1000):
                 continue
             if packet_id in self.instancePacket.keys():
