@@ -17,7 +17,7 @@ pm = pymem.Pymem("TMSRVIN.exe")
 IFACE = 'Intel(R) PRO/1000 MT Network Connection'
 FILTER = 'tcp and port 8281 and host 135.148.49.138'
 SERVER_IP = '135.148.49.138'
-API = 'https://5d1b-2804-431-c7fd-a066-993a-4c23-86e6-70b4.ngrok.io'
+API = 'https://www.wydunderworld.com'
 TOKEN_API = 'daskd435$@$fgdg812!@!@fU'
 
 def loadBuffers() -> None:
@@ -120,8 +120,8 @@ class PacketManager(object): #PACKET MANAGER
         self.buffer = data
         self.instancePacket = {
             0x334: Packet_334,
-            0x333: Packet_333,
-            0x666: Packet_666,
+            #0x333: Packet_333,
+            #0x666: Packet_666,
         }
         self.splitBuffer()
         self.bufferIterator()
@@ -230,8 +230,8 @@ class PacketHandle(PacketManager):
         self.packetManager = super().__init__
 
     def validateBuffer(self, buffer: bytes) -> bool:
-        #if buffer[IP].src == SERVER_IP:
-        #    return False
+        if buffer[IP].src == SERVER_IP:
+            return False
         if not buffer.haslayer(Raw):
             return False
         return True
