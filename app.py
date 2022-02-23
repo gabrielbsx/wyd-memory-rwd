@@ -14,9 +14,10 @@ PROCESS_NAME = 'TMSRVIN.exe'
 cUser = (CUser * 1000)()
 cMob = (CMob * 12800)()
 pm = pymem.Pymem("TMSRVIN.exe")
-IFACE = 'Intel(R) PRO/1000 MT Network Connection'
-FILTER = 'tcp and port 8281 and host 135.148.49.138'
-SERVER_IP = '135.148.49.138'
+#IFACE = 'Intel(R) PRO/1000 MT Network Connection'
+IFACE = 'Intel(R) I350 Gigabit Network Connection #2'
+FILTER = 'tcp and port 8281 and host 189.1.170.58'
+SERVER_IP = '189.1.170.58'
 API = 'https://www.wydunderworld.com'
 TOKEN_API = 'daskd435$@$fgdg812!@!@fU'
 
