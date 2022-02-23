@@ -21,6 +21,8 @@ SERVER_IP = '189.1.170.58'
 API = 'https://www.wydunderworld.com'
 TOKEN_API = 'daskd435$@$fgdg812!@!@fU'
 
+print(sizeof(CUser()))
+
 def loadBuffers() -> None:
     global cUser, cMob, pm, CUSER_ADDRESS, CMOB_ADDRESS
     cUserBuffer = pm.read_bytes(CUSER_ADDRESS, sizeof(cUser))
