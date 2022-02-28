@@ -339,7 +339,7 @@ class CUser(Structure):
         ("UnknowByte_2876", c_int),
         ("UnknowByte_2880", c_int),
         ("UnknowByte_2884", c_int),
-        ("UnknowByte_2888", c_int * 36),
+        ("UnknowByte_2888", c_int * 32),
         ("UnknowByte_3032", c_int),
         ("UnknowByte_3036", c_int),
         ("UnknowByte_3040", c_int),
